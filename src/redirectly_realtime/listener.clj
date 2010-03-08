@@ -5,6 +5,7 @@
   (:require
     [clojure.contrib.logging :as log])
   (:gen-class))
+  
 
 (def click-properties
   (doto (Properties.)
@@ -18,7 +19,7 @@
   (proxy [UpdateListener] []
     (update [newEvents oldEvents]
       (let [event (first newEvents)]
-        (println (format "(last 30 seconds): keyword= %s, sum= %s" (.get event "keyword") (.get event "clicks")))))))
+        (log/info (format "(last 30 seconds): keyword= %s, sum= %s" (.get event "keyword") (.get event "clicks")))))))
 
 (def service
   (EPServiceProviderManager/getDefaultProvider configuration))

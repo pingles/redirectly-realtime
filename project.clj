@@ -4,5 +4,5 @@
     [org.clojure/clojure "1.1.0"]
     [org.clojure/clojure-contrib "1.1.0"]
     [commons-logging/commons-logging "1.1.1"]
-    [com.espertech/esper "3.3.0"]
+    [com.espertech/esper "3.3.0" :exclusions [log4j]]
     [com.rabbitmq/rabbitmq-client "1.3.0"]])
