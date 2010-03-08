@@ -34,18 +34,28 @@ RabbitMQ Publisher + Subscriber
 Start a REPL by running `lein repl` in the project root. Then, to start the client, run the following:
 
     Clojure 1.1.0
-    user=> (use 'redirectly-realtime.rabbit :reload)
-    user=> (setup-channel "clicks-exchange" "clicks-queue" "routing-key")
-    #<ChannelN AMQChannel(amqp://guest@localhost:5672/,1)>
-    user=> (listen-loop "clicks-queue")
+    user=> (use 'redirectly-realtime.rabbit :reload)                                    
+    user=> (with-open [channel (create-channel)]
+    (setup-channel channel "clicks-exchange" "click-queue-1" "some-routing-key")
+    (listen-loop channel "click-queue-1"))
 
 This will block whilst waiting for messages to be delivered. To send a message, you'll need to start another REPL with `lein repl` and run:
 
     Clojure 1.1.0
     user=> (use 'redirectly-realtime.rabbit :reload)
-    user=> (send-message channel "clicks-exchange" "routing-key" "Hello World!")
+    user=> (with-open [channel (create-channel)] (send-message channel "clicks-exchange" "some-routing-key" "some message here again"))
 
 If you switch back to the first window you should see a message:
 
     Mar 8, 2010 5:17:37 PM clojure.contrib.logging$eval__100$impl_write_BANG___111 invoke
     INFO: Received Hello World!
+
+Multiple listeners can be connected by binding their own queue to the exchange. In a new REPL window, run the following:
+
+    Clojure 1.1.0
+    user=> (use 'redirectly-realtime.rabbit :reload)                                    
+    user=> (with-open [channel (create-channel)]
+    (setup-channel channel "clicks-exchange" "click-queue-2" "some-routing-key")
+    (listen-loop channel "click-queue-2"))
+
+This will bind the `click-queue-2` to the `clicks-exchange` exchange. Send a message (as before) and it should appear in both sessions.

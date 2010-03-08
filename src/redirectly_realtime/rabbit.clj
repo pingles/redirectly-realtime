@@ -34,6 +34,10 @@
   (log/info (str "Received " (String. body))))
 
 (defn listen-loop [channel queue-name]
+  "Listens for messages in a loop. Can be run as follows: 
+  (with-open [channel (create-channel)]
+    (setup-channel channel \"clicks-exchange\" \"click-queue-<id>\" \"some-routing-key\")
+    (listen-loop channel \"click-queue-<id>\"))"
   (let [consumer (QueueingConsumer. channel)]
     (do
       (.basicConsume channel queue-name true consumer)
