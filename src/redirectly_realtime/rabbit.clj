@@ -3,6 +3,8 @@
     [com.rabbitmq.client ConnectionFactory Connection Channel ConnectionParameters QueueingConsumer])
   (:require
     [clojure.contrib.logging :as log]))
+    
+;; See http://measuringmeasures.blogspot.com/2009/05/multicast-rabbitmq-from-clojure.html for inspiration
 
 (def connection-params
   (doto (ConnectionParameters.)
