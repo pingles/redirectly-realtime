@@ -71,9 +71,9 @@
 ;; java -server -cp redirectly-realtime-standalone.jar redirectly_realtime.sample
 (defn -main
   [& args]
-  (do
-    (log/info (str "Starting Esper/RabbitMQ sample. Logging with " log/*impl-name*))
     (with-command-line args
       "Esper/RabbitMQ sample"
-      [[type "Client or publisher." "client"]]
-      ((commands type)))))
+      [[run "Client or publisher." "client"]]
+      (do
+        (log/info (str "Starting " run " Esper/RabbitMQ sample. Logging with " log/*impl-name*))
+        ((commands run)))))
