@@ -37,7 +37,7 @@ Start a REPL by running `lein repl` in the project root. Then, to start the clie
     user=> (use 'redirectly-realtime.rabbit :reload)                                    
     user=> (with-open [channel (create-channel)]
     (setup-channel channel "clicks-exchange" "click-queue-1" "some-routing-key")
-    (listen-loop channel "click-queue-1"))
+    (listen-loop channel "click-queue-1" handle-delivery))
 
 This will block whilst waiting for messages to be delivered. To send a message, you'll need to start another REPL with `lein repl` and run:
 
@@ -56,6 +56,28 @@ Multiple listeners can be connected by binding their own queue to the exchange. 
     user=> (use 'redirectly-realtime.rabbit :reload)                                    
     user=> (with-open [channel (create-channel)]
     (setup-channel channel "clicks-exchange" "click-queue-2" "some-routing-key")
-    (listen-loop channel "click-queue-2"))
+    (listen-loop channel "click-queue-2" handle-delivery))
 
 This will bind the `click-queue-2` to the `clicks-exchange` exchange. Send a message (as before) and it should appear in both sessions.
+
+
+Sample App Micro-Benchmark
+--------------------------
+The `redirectly-realtime.sample` namespace includes some things to make it easier to test a publisher and consumer, as well as time the overall throughput.
+
+Having built the application with `lein uberjar`, run `java -server -cp redirectly-realtime-standalone.jar redirectly_realtime.sample --type client` to start the client process. Run `java -server -cp redirectly-realtime-standalone.jar redirectly_realtime.sample --type publisher` to start the publisher.
+
+The client should report
+
+    INFO: Starting Esper/RabbitMQ sample. Logging with org.apache.commons.logging
+
+Upon starting the publisher you should also see log messages showing the output from the Esper listener:
+
+    INFO: Sample Keyword Here (1)
+    INFO: Sample Keyword Here (2)
+    ...
+    INFO: Sample Keyword Here (10000)
+    
+The publisher will also print it's elapsed time:
+
+    Elapsed time: 11708.645 msecs

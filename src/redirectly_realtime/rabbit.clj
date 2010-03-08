@@ -35,15 +35,15 @@
 (defn handle-delivery [body]
   (log/info (str "Received " (String. body))))
 
-(defn listen-loop [channel queue-name]
+(defn listen-loop [channel queue-name handler]
   "Listens for messages in a loop. Can be run as follows: 
   (with-open [channel (create-channel)]
     (setup-channel channel \"clicks-exchange\" \"click-queue-<id>\" \"some-routing-key\")
-    (listen-loop channel \"click-queue-<id>\"))"
+    (listen-loop channel \"click-queue-<id>\" handle-delivery))"
   (let [consumer (QueueingConsumer. channel)]
     (do
       (.basicConsume channel queue-name true consumer)
       (while true
         (try
-          (let [message (.nextDelivery consumer)] (handle-delivery (.getBody message)))
+          (let [message (.nextDelivery consumer)] (handler (.getBody message)))
           (catch InterruptedException e (log/error e)))))))

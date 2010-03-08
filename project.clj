@@ -1,5 +1,9 @@
 (defproject redirectly-realtime "0.1.0"
   :description "Provides realtime updates of clicks from RabbitMQ connection"
+  :namespaces [
+    redirectly-realtime.rabbit
+    redirectly-realtime.esper
+    redirectly-realtime.sample]
   :dependencies [
     [org.clojure/clojure "1.1.0"]
     [org.clojure/clojure-contrib "1.1.0"]
