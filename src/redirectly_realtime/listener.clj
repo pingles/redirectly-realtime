@@ -15,11 +15,13 @@
   (doto (Configuration.)
     (.addEventType "ClickEvent" click-properties)))
 
+(defn log-event [event]
+  (log/info (format "(last 30 seconds): keyword= %s, sum= %s" (.get event "keyword") (.get event "clicks"))))
+
 (def print-listener
   (proxy [UpdateListener] []
     (update [newEvents oldEvents]
-      (let [event (first newEvents)]
-        (log/info (format "(last 30 seconds): keyword= %s, sum= %s" (.get event "keyword") (.get event "clicks")))))))
+      (apply log-event newEvents))))
 
 (def service
   (EPServiceProviderManager/getDefaultProvider configuration))
