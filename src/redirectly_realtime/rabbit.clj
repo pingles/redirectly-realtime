@@ -17,10 +17,11 @@
 (defn create-connection [host port]
   (.newConnection connection-factory host port))
 
-(def channel (.createChannel (create-connection "localhost" 5672)))
+(defn create-channel []
+  (.createChannel (create-connection "localhost" 5672)))
 
 ;; initialises exchanges and queues
-(defn setup-channel [exchange-name queue-name routing-key]
+(defn setup-channel [channel exchange-name queue-name routing-key]
   (doto channel
     (.exchangeDeclare exchange-name "fanout")
     (.queueDeclare queue-name)
@@ -32,7 +33,7 @@
 (defn handle-delivery [body]
   (log/info (str "Received " (String. body))))
 
-(defn listen-loop [queue-name]
+(defn listen-loop [channel queue-name]
   (let [consumer (QueueingConsumer. channel)]
     (do
       (.basicConsume channel queue-name true consumer)
