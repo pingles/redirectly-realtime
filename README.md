@@ -18,7 +18,7 @@ Esper Listener
 Start a REPL by running `lein repl` in the project root. Then you can run the following commands:
 
     Clojure 1.1.0
-    user=> (use 'redirectly-realtime.listener :reload)
+    user=> (use 'redirectly-realtime.esper :reload)
     user=> (attach-listener count-statement print-listener)
     user=> (send-event {"keyword" "this is the keyword"} "ClickEvent")
 

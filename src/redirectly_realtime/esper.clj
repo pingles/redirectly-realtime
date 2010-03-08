@@ -1,4 +1,4 @@
-(ns redirectly-realtime.listener
+(ns redirectly-realtime.esper
   (:import
     [java.util Properties]
     [com.espertech.esper.client Configuration UpdateListener EPStatement EPServiceProviderManager])
@@ -39,7 +39,7 @@
   (.sendEvent (.getEPRuntime service) event type))
 
 ;; Starts the run-loop. Can be run fromm command-line as follows
-;; java -cp redirectly-realtime-standalone.jar redirectly_realtime.listener
+;; java -cp redirectly-realtime-standalone.jar redirectly_realtime.esper
 (defn -main
   []
   (log/info (str "Starting listener")))
