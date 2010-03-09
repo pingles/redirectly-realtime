@@ -65,7 +65,7 @@ Sample App Micro-Benchmark
 --------------------------
 The `redirectly-realtime.sample` namespace includes some things to make it easier to test a publisher and consumer, as well as time the overall throughput.
 
-Having built the application with `lein uberjar`, run `java -server -cp redirectly-realtime-standalone.jar redirectly_realtime.sample --type client` to start the client process. Run `java -server -cp redirectly-realtime-standalone.jar redirectly_realtime.sample --type publisher` to start the publisher.
+Having built the application with `lein uberjar`, run `java -server -cp redirectly-realtime-standalone.jar redirectly_realtime.sample --run client` to start the client process. Run `java -server -cp redirectly-realtime-standalone.jar redirectly_realtime.sample --run publisher` to start the publisher.
 
 The client should report
 
