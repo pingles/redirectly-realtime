@@ -24,8 +24,8 @@
   []
   (.createChannel (create-connection "localhost" 5672)))
 
-;; initialises exchanges and queues
 (defn setup-channel
+  "Initialises the exchanges and queues."
   [channel exchange-name queue-name routing-key]
   (doto channel
     (.exchangeDeclare exchange-name "fanout")

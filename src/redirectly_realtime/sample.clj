@@ -14,32 +14,39 @@
 (def unique-id (str (java.util.UUID/randomUUID)))
 (def queue-name (str "click-queue-" unique-id))
 
-(defn log-event
+(defn log-count
   "Called once with each new event handled by Esper."
   [event]
-  (log/info (format "%s (%s)" (.get event "keyword") (.get event "clicks"))))
+  (log/info (format "%s sum=%s" (.get event "keyword") (.get event "cnt"))))
 
-(defn null-event
-  "Does nothing to help benchmarking without I/O"
+(defn log-drop-off
+  "Called when a drop-off in count is detected."
   [event]
-  nil)
-
-(def logging-listener
-  (esper/create-listener log-event))
-
+  (log/warn (format "%s %s received in last 10 seconds, average was %s" (.get event "cnt") (.get event "keyword") (.get event "avgCnt"))))
+  
 (defn message-delivery
   [message]
   (esper/send-event (read-json (String. message)) "ClickEvent"))
 
-(def statement
-  (esper/create-statement "select keyword, count(keyword) as clicks from ClickEvent.win:time(30 sec) group by keyword"))
+(def clicks-per-second-statement "
+  insert into ClicksPerSecond
+  select keyword, count(*) as cnt 
+  from ClickEvent.win:time_batch(1 sec)
+  group by keyword")
+
+(def clicks-dropoff-statement "
+  select keyword, avg(cnt) as avgCnt, cnt 
+  from ClicksPerSecond.win:time(10 sec)
+  group by keyword
+  having cnt < avg(cnt)")
 
 (defn client
   "Starts the rabbit listener for the exchange and attaches an
   Esper listener. Results are logged when raised."
   []
   (with-open [channel (rabbit/create-channel)]
-    (esper/attach-listener statement logging-listener)
+    (esper/attach-listener (esper/create-statement clicks-per-second-statement) (esper/create-listener log-count))
+    (esper/attach-listener (esper/create-statement clicks-dropoff-statement) (esper/create-listener log-drop-off))
     (rabbit/setup-channel channel exchange queue-name routing-key)
     (rabbit/listen-loop channel queue-name message-delivery)))
 
