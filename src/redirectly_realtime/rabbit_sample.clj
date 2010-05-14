@@ -1,4 +1,4 @@
-(ns redirectly-realtime.sample
+(ns redirectly-realtime.rabbit_sample
   (:require
     [clojure.contrib.logging :as log]
     [redirectly-realtime.esper :as esper]
