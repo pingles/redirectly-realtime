@@ -8,16 +8,20 @@
     [clojure.contrib.json.write :only (json-str)]
     [clojure.contrib.command-line :only (with-command-line)])
   (:gen-class))
+  
+(def interesting-tube (beanstalk/publisher "interesting"))
 
 (defn log-count
   "Called once with each new event handled by Esper."
   [event]
-  (log/info (format "%s sum=%s" (.get event "keyword") (.get event "cnt"))))
+  (let [message (format "Keyword %s sum=%s" (.get event "keyword") (.get event "cnt"))]
+    (beanstalk/post-message message interesting-tube)))
 
 (defn log-drop-off
   "Called when a drop-off in count is detected."
   [event]
-  (log/warn (format "%s %s received in last 10 seconds, average was %s" (.get event "cnt") (.get event "keyword") (.get event "avgCnt"))))
+  (let [message (format "%s %s received in last 10 seconds, average was %s" (.get event "cnt") (.get event "keyword") (.get event "avgCnt"))]
+    (beanstalk/post-message message interesting-tube)))
 
 (defn message-delivery
   [message]
@@ -38,14 +42,14 @@
 (defn handler
   [message]
   (message-delivery message))
-
+    
 (defn run-client
   []
   (do
     (esper/attach-listener (esper/create-statement clicks-per-second-statement) (esper/create-listener log-count))
     (esper/attach-listener (esper/create-statement clicks-dropoff-statement) (esper/create-listener log-drop-off))
-    (beanstalk/listen handler)))
+    (beanstalk/listen-to "clicks" handler)))
 
 (defn -main
-  [& args]
+  [nothing]
   (run-client))
