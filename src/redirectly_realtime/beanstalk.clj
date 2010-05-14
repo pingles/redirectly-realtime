@@ -26,7 +26,7 @@
 (defn listen-to
   "Starts beanstalkd client and polls for messages. Forwards to Esper
   which can log on interesting stuff."
-  [client handler]
+  [handler client]
   (loop [job (.reserve client nil)]
     (when (not (nil? job))
       (try
