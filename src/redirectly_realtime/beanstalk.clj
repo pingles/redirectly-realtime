@@ -15,9 +15,7 @@
 (defn consumer
   "Watches to tube"
   [tube]
-  (let [client (ClientImpl. )]
-    (.watch client tube)
-    client))
+  (doto (ClientImpl.) (.watch tube) (.ignore "default")))
     
 (defn post-message
   [message client]

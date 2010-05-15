@@ -181,8 +181,6 @@ var ResponseHandler = {
       this.args = this.header.split(' ');
       code = this.args[0];
       
-      sys.puts('Response was ' + code)
-      
       if(code === this.success_code) {
 	this.args.shift(); //don't include the code in the success args, but do in the err args
 	this.success = true;

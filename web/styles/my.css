@@ -8,3 +8,21 @@ a.switch_thumb { width: 122px; height: 26px; line-height: 26px; padding: 0; marg
 a.swap { background-position: left bottom; }
 
 #footer {text-align: center; font-size:90%;}
+
+dt.keyword {
+  display: none;
+}
+dd.keyword {
+  font-size: 1.25em;
+  margin-left: 0;
+}
+
+dt.clicks {
+  font-weight: normal;
+  float: left;
+  color: #666;
+}
+dd.clicks {
+  float: left;
+  font-size: 1.25em;
+}

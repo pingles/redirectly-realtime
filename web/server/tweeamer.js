@@ -42,7 +42,7 @@ var socket = (function(ws) {
       }).addListener("close", function () { 
           sys.puts("WebSocket closed");
           connectedClients = connectedClients.splice(connectedClients.indexOf(websocket), 1);
-      });      
+      });
     });
 
     return srv;

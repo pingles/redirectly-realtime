@@ -101,11 +101,13 @@ var TwitterStream = (function(stream, $) {
             return;
         }
         
-        $('<li>' + parsed.keyword + '</li>').hide().prependTo('#outputarea ul').fadeIn(); 
+        if (parsed.eventType == "KeywordCount") {
+          $('<li class="keyword-count"><dl><dt class="keyword">Keyword</dt><dd class="keyword">' + parsed.keyword + '</dd><dt class="clicks">Clicks (last 10 seconds)</dt><dd class="clicks">' + parsed.clicks + '</dd></dl></li>').hide().prependTo('#outputarea ul').fadeIn(); 
+        }
+        
         if ($("#outputarea > ul > li").length > MAX_ITEMS)  {
             $('li:last', $('#outputarea ul')).remove();
         }
-                
     });
 
     TwitterStream.onOpen(function() {
