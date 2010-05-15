@@ -6,20 +6,17 @@ var bt = require('./beanstalk_client');
 
 var connectedClients = [];
 
-var sendToClients = function(data) {
-  for (var i=0; i < connectedClients.length; i++) {
-    connectedClients[i].write(data)
-  };
-}
-
 bt.Client.connect('127.0.0.1:11300').addCallback(function(conn) {
   conn.watch('interesting');
   
   var messageHandler = function(job_id, job_json) {
     var parsed = JSON.parse(job_json);
     
-    sendToClients(job_json)
-    sys.puts('got job: ' + job_id + ' keyword: ' + parsed.keyword);
+    sys.puts('I: ' + job_json);
+    
+    for (var i=0; i < connectedClients.length; i++) {
+      connectedClients[i].write(job_json)
+    };
     
     conn.destroy(job_id);
     conn.reserve().addCallback(messageHandler);

@@ -19,12 +19,20 @@
   "Called once with each new event handled by Esper."
   [event]
   (beanstalk/post-message (keyword-count-message event) (beanstalk/publisher "interesting")))
+  
+(defn drop-off-message
+  "Creates message with keyword and associated data"
+  [event]
+  (let [the-keyword (.get event "keyword") clicks-count (.get event "cnt") avg-count (.get event "avgCnt")]
+    {"eventType" "CountDropOff" "keyword" the-keyword "clicks" clicks-count "avgClicks" avg-count}))
 
 (defn log-drop-off
   "Called when a drop-off in count is detected."
   [event]
-  (let [message (format "%s %s received in last 10 seconds, average was %s" (.get event "cnt") (.get event "keyword") (.get event "avgCnt"))]
-    (beanstalk/post-message {"keyword" message} (beanstalk/publisher "interesting"))))
+  (let [message (drop-off-message event)]
+    (do
+      (println (str "Drop-off detected: " message))
+      (beanstalk/post-message message (beanstalk/publisher "interesting")))))
 
 (def clicks-per-second-statement "
   insert into ClicksPerSecond
@@ -50,12 +58,11 @@
       (println (str "ClickEvent received: " click-event))
       (esper/send-event click-event "ClickEvent"))))
     
-; (esper/send-event (click-event message) "ClickEvent")
-
 (defn run-client
   []
   (do
     (esper/attach-listener (esper/create-statement clicks-per-second-statement) (esper/create-listener log-count))
+    (esper/attach-listener (esper/create-statement clicks-dropoff-statement) (esper/create-listener log-drop-off))
     (beanstalk/listen-to handler (beanstalk/consumer "clicks"))))
 
 (defn -main

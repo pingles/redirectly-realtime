@@ -105,6 +105,10 @@ var TwitterStream = (function(stream, $) {
           $('<li class="keyword-count"><dl><dt class="keyword">Keyword</dt><dd class="keyword">' + parsed.keyword + '</dd><dt class="clicks">Clicks (last 10 seconds)</dt><dd class="clicks">' + parsed.clicks + '</dd></dl></li>').hide().prependTo('#outputarea ul').fadeIn(); 
         }
         
+        if (parsed.eventType == "CountDropOff") {
+          $('<li class="drop-off"><span class="clicks">' + parsed.clicks + '</span> clicks for <span class="keyword">' + parsed.keyword + '</span> less than the average (' + parsed.avgClicks + ') over the last 10 seconds.</li>').hide().prependTo('#outputarea ul').fadeIn(); 
+        }
+        
         if ($("#outputarea > ul > li").length > MAX_ITEMS)  {
             $('li:last', $('#outputarea ul')).remove();
         }

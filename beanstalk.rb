@@ -33,6 +33,6 @@ click = {
     }
   }
 
-50.times do
+1500.times do
   beanstalk.put(click.to_json)
 end
